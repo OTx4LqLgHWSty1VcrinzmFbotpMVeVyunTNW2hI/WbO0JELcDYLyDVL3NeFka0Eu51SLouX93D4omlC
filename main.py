@@ -15,35 +15,50 @@ import os
 bot = discord.Bot()
 bot.load_extension('commands')
 
+import os
+import discord
+import asyncio
+from dotenv import load_dotenv
+from flask import Flask
+import threading
+
+app = Flask(__name__)
+
+load_dotenv()
+
+bot = discord.Bot()
 
 @bot.slash_command(
-    # Can only be used in private messages
     contexts={discord.InteractionContextType.private_channel},
-    # Can only be used if the bot is installed to your user account,
-    # if left blank it can only be used when added to guilds
     integration_types={discord.IntegrationType.user_install},
 )
-async def selamla(ctx: discord.ApplicationContext, user: discord.User):
-    await ctx.respond(f"Nabıyon Kardeş. Wgleri Tarat Bakayım., {user}!")
-
+async def merhaba_de(ctx: discord.ApplicationContext, user: discord.User):
+    await ctx.respond(f"Merhaba Ben Eren Kara Namıdeğer xXxHileci Slayer - Wargods GuardxXx, {user}!")
 
 @bot.slash_command(
-    # This command can be used by guild members, but also by users anywhere if they install it
     integration_types={
         discord.IntegrationType.guild_install,
         discord.IntegrationType.user_install,
     },
 )
-async def merhaba_eren(ctx: discord.ApplicationContext):
+async def eren(ctx: discord.ApplicationContext):
     await ctx.respond("Sanada Merhaba. Wargods Tarat Hadi")
-
 
 @bot.event
 async def on_ready():
-    
-    #await bot.tree.sync()
     print(f'Bot {str(bot.user)} works')
 
+@app.route('/')
+def index():
+    return "Flask is working!"
 
+def run_flask():
+    app.run(host='0.0.0.0', port=5000)
 
-bot.run(os.getenv("DISCORD_TOKEN"))
+async def start_bot():
+    await bot.start(os.getenv("DISCORD_TOKEN"))
+
+if __name__ == "__main__":
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
+    asyncio.run(start_bot())
