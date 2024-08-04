@@ -144,7 +144,7 @@ class COMMANDS(commands.Cog):
                         report = "Vermillion Hack Bulundu [Yıl Kaç? 👴]"
                     elif report == "Found Big CFG - unknown status":
                         report = "Büyük Bir CFG Var Adamda Sıkıntılı"
-                    elif report == "Alternative" or report == "Found Alternative":
+                    elif report == "Alternative" or report == "Found Alternative" or report == "AlterNative":
                         report = "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]"
                     elif report == "Generic Cheat Detection":
                         report = "Wargods Daha İsim Koyamamis Nası Bi Hileyse"
