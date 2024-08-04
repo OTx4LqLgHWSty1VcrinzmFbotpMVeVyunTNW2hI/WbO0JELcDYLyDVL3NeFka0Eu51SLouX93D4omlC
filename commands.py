@@ -158,6 +158,8 @@ class COMMANDS(commands.Cog):
                         report = "Karakter Modellerini Değiştirmiş 🤦‍♂️"
                     elif report == "Found Super Simple Wallhack":
                         report = "Çok Basit Wallhack [Kendi Yapmış Olabilir Heee 😍]"
+                    elif report == "Found HPP Hack Data":
+                        report = "HPP Hilesinin Verisi Bulunmuş [Silememiş Herhalde 😭]"    
                     elif report == "Found HPP CFG Data":
                         report = "HPP Hilesinin CFG Dosyası Bulunmuş [Silememiş Herhalde 😭]"
                     elif report == "Found HPP Hack":
