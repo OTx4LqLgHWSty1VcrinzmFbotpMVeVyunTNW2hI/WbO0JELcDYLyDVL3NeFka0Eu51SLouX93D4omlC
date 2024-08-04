@@ -178,6 +178,8 @@ class COMMANDS(commands.Cog):
                         report = "OpenGL32 Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]"
                     elif report == "Aimbot" or report == "Found SXE Aim":
                         report = "Dandik Bir Aimbot Kullanmış 🤣"
+                    elif report == "Found Crystal Hack Data":
+                        report = "Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]"
 
                     detection_status = "belli degil"
                     if detection == "Yes":
