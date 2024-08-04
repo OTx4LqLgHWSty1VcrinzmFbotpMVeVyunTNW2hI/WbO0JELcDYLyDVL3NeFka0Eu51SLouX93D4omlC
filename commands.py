@@ -222,13 +222,13 @@ class COMMANDS(commands.Cog):
                         f"**OYUN**: {row['Game']}\n"
                         f"**İD**: {row['ID']}\n"
                         f"**EN SON OYNADIĞI SERVER**: {row['Server']}\n"
-                        f"**IP [SANSURLU]**: {row['IP']}\n"
+                        f"**İP [SANSÜRLÜ]**: {row['IP']}\n"
                         f"**ÜLKE**: {row['Country']}\n"
-                        f"**GUNAHI**: {row['Report']}\n"
-                        f"**TARIH**: {row['Date']}\n"
+                        f"**GÜNAHI**: {row['Report']}\n"
+                        f"**TARİH**: {row['Date']}\n"
                         f"**SAAT**: {row['Time']}\n"
                         f"**SİCİLİ**: {row['Detection before']}\n"
-                        f"**BUTUN BILGILERI**: {row['Report URL']}\n"
+                        f"**BÜTÜN BİLGİLERİ**: {row['Report URL']}\n"
                         "-------------------------------------------------------------------------------------"
                     ),
                     inline=False
