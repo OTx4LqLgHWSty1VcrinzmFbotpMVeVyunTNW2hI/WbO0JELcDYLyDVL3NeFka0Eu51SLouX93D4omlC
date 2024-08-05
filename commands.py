@@ -210,7 +210,7 @@ class COMMANDS(commands.Cog):
         if rows:
             embed = discord.Embed(
                 title="HILE SAVAR - EREN KARA",
-                description="-------------------------------------------------------------------------------------",
+                description="------------------------------------------------------------------------------",
                 color=discord.Color.brand_red(),
                 thumbnail="https://wargods.ro/wcd/wcd.ico"
             )
@@ -229,7 +229,7 @@ class COMMANDS(commands.Cog):
                         f"**SAAT**: {row['Time']}\n"
                         f"**SİCİLİ**: {row['Detection before']}\n"
                         f"**BÜTÜN BİLGİLERİ**: {row['Report URL']}\n"
-                        "-------------------------------------------------------------------------------------"
+                        "-----------------------------------------------------------------------------"
                     ),
                     inline=False
                 )
