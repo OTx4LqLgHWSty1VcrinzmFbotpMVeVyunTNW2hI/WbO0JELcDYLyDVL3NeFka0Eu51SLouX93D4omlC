@@ -180,6 +180,9 @@ class COMMANDS(commands.Cog):
                         report = "Dandik Bir Aimbot Kullanmış 🤣"
                     elif report == "Found Crystal Hack Data":
                         report = "Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]"
+                    elif report == "Found Suspicious CFG apex.cfg (alias count: 384) - unknown status":
+                        report = "Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde"
+                       
 
                     detection_status = "belli degil"
                     if detection == "Yes":
@@ -210,7 +213,7 @@ class COMMANDS(commands.Cog):
         if rows:
             embed = discord.Embed(
                 title="HILE SAVAR - EREN KARA",
-                description="------------------------------------------------------------------------------",
+                description="-------------------------------------------------------------------------------",
                 color=discord.Color.brand_red(),
                 thumbnail="https://wargods.ro/wcd/wcd.ico"
             )
