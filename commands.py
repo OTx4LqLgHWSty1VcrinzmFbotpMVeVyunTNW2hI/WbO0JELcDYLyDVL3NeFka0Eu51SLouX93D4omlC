@@ -213,7 +213,7 @@ class COMMANDS(commands.Cog):
         if rows:
             embed = discord.Embed(
                 title="HILE SAVAR - EREN KARA",
-                description="-------------------------------------------------------------------------------",
+                description="---------------------------------------------------------------------------------",
                 color=discord.Color.brand_red(),
                 thumbnail="https://wargods.ro/wcd/wcd.ico"
             )
