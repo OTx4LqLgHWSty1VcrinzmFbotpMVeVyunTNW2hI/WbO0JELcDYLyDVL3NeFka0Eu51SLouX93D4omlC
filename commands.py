@@ -83,106 +83,85 @@ class COMMANDS(commands.Cog):
                     timestamp_td = cells[4]
                     detection = cells[5].get_text(strip=True)
 
+                    country_translation = {
+                        "Romania": "Romanya",
+                        "Greece": "Yunanistan",
+                        "Lithuania": "Litvanya",
+                        "United Kingdom": "İngiltere",
+                        "Russia": "Rusya",
+                        "Egypt": "Mısır",
+                        "Ukraine": "Ukrayna",
+                        "Algeria": "Cezayir",
+                        "Albania": "Arnavutluk",
+                        "Serbia": "Sırbistan",
+                        "Germany": "Almanya",
+                        "Bulgaria": "Bulgaristan",
+                        "Bosnia and Herzegovina": "Bosna Hersek",
+                        "Ireland": "İrlanda",
+                        "Sweden": "İsveç",
+                        "Switzerland": "İsviçre",
+                        "Hungary": "Macaristan",
+                        "Kazakhstan": "Kazakistan",
+                        "Uzbekistan": "Özbekistan",
+                        "France": "Fransa",
+                        "Poland": "Polonya",
+                        "Georgia": "Gürcistan",
+                    }
+
+                    # Rapor adlarını çeviren sözlük
+                    report_translation = {
+                        "Found Vermillion": "Vermillion Hack Bulundu [Yıl Kaç? 👴]",
+                        "Found Big CFG - unknown status": "Büyük Bir CFG Var Adamda Sıkıntılı",
+                        "Alternative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
+                        "Found Alternative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
+                        "AlterNative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
+                        "Generic Cheat Detection": "Wargods Daha İsim Koyamamis Nası Bi Hileyse",
+                        "Found Oxware Data": "Oxware Hack Bulundu [OOO Güncel Hile 😈]",
+                        "Riscript Injector": "Dandik İnjektörlerden İyidir | Riscript Injector",
+                        "Found Injector": "İsimsiz Dandik İnjektor Kullanmış 🤣",
+                        "Cheat Model": "Karakter Modellerini Değiştirmiş 🤦‍♂️",
+                        "Cheat model": "Karakter Modellerini Değiştirmiş 🤦‍♂️",
+                        "Found Super Simple Wallhack": "Çok Basit Wallhack [Kendi Yapmış Olabilir Heee 😍]",
+                        "Found HPP Hack Data": "HPP Hilesinin Verisi Bulunmuş [Silememiş Herhalde 😭]",
+                        "Found HPP CFG Data": "HPP Hilesinin CFG Dosyası Bulunmuş [Silememiş Herhalde 😭]",
+                        "Found HPP Hack": "HPP Hack Bulunmuş [OOO İyi Hile 😈]",
+                        "Found Extreme Injector": "Extreme Injector Kullanmış",
+                        "Found BunnyHop CFG - unknown status": "Bunny CFG Bulunmuş [Demekki Düz Hızlanan Buymuş 😡]",
+                        "Found Leis": "Leis Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]",
+                        "Knifebot": "Bıçak Botu Kullanmış 🤣",
+                        "Wallhack": "Duvardan Eren Kara'yı (Yani Beni) Görmüş 😈",
+                        "OpenGL32 Cheat": "OpenGL32 Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]",
+                        "Aimbot": "Dandik Bir Aimbot Kullanmış 🤣",
+                        "Found SXE Aim": "Dandik Bir Aimbot Kullanmış 🤣",
+                        "Found Crystal Hack Data": "Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]",
+                        "Found Suspicious CFG apex.cfg (alias count: 384) - unknown status": "Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde",
+                        "Psilentware": "Psilentware Hack Bulunmuş [OOO Güncel / İyi Hile 😈]"
+                    }
+
+                    # Diğer kod
                     flag_img_tag = cells[2].find('img', {'style': 'display:inline-block;vertical-align:sub;'})
                     country = "Bilinmiyor"
+
                     if flag_img_tag and 'title' in flag_img_tag.attrs:
                         country = flag_img_tag['title']
 
+                    # Ülke adını Türkçe'ye çevir
+                    country = country_translation.get(country, country)
+
+                    # Tarih ve saat kısmını alma
                     date_part = "Bilinmiyor"
                     time_part = "Bilinmiyor"
 
                     if timestamp_td:
                         br_tags = timestamp_td.find_all('br')
                         if len(br_tags) == 1:
-                            date_part = timestamp_td.get_text(separator='|').split('|')[0].strip()
-                            time_part = timestamp_td.get_text(separator='|').split('|')[1].strip()
+                            text_parts = timestamp_td.get_text(separator='|').split('|')
+                            if len(text_parts) == 2:
+                                date_part = text_parts[0].strip()
+                                time_part = text_parts[1].strip()
 
-                    if country == "Romania":
-                        country = "Romanya"
-                    if country == "Greece":
-                        country = "Yunanistan"
-                    if country == "Lithuania":
-                        country = "Litvanya"
-                    if country == "United Kingdom":
-                        country = "İngiltere"
-                    if country == "Russia":
-                        country = "Rusya"
-                    if country == "Egypt":
-                        country = "Mısır"
-                    if country == "Ukraine":
-                        country = "Ukrayna"
-                    if country == "Algeria":
-                        country = "Cezayir"
-                    if country == "Albania":
-                        country = "Arnavutluk"
-                    if country == "Serbia":
-                        country = "Sırbistan"
-                    if country == "Germany":
-                        country = "Almanya"
-                    if country == "Bulgaria":
-                        country = "Bulgaristan"
-                    if country == "Bosnia and Herzegovina":
-                        country = "Bosna Hersek"
-                    if country == "Ireland":
-                        country = "İrlanda"
-                    if country == "Sweden":
-                        country = "İsveç"
-                    if country == "Switzerland":
-                        country = "İsviçre"
-                    if country == "Hungary":
-                        country = "Macaristan"
-                    if country == "Kazakhstan":
-                        country = "Kazakistan"
-                    if country == "Uzbekistan":
-                        country = "Özbekistan"
-                    if country == "France":
-                        country = "Fransa"
-                    if country == "Poland":
-                        country = "Polonya"
-
-                    if report == "Found Vermillion":
-                        report = "Vermillion Hack Bulundu [Yıl Kaç? 👴]"
-                    elif report == "Found Big CFG - unknown status":
-                        report = "Büyük Bir CFG Var Adamda Sıkıntılı"
-                    elif report == "Alternative" or report == "Found Alternative" or report == "AlterNative":
-                        report = "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]"
-                    elif report == "Generic Cheat Detection":
-                        report = "Wargods Daha İsim Koyamamis Nası Bi Hileyse"
-                    elif report == "Found Oxware Data":
-                        report = "Oxware Hack Bulundu [OOO Güncel Hile 😈]"
-                    elif report == "Riscript Injector":
-                        report = "Dandik İnjektörlerden İyidir | Riscript Injector"
-                    elif report == "Found Injector":
-                        report = "İsimsiz Dandik İnjektor Kullanmış 🤣"
-                    elif report == "Cheat Model" or report == "Cheat model":
-                        report = "Karakter Modellerini Değiştirmiş 🤦‍♂️"
-                    elif report == "Found Super Simple Wallhack":
-                        report = "Çok Basit Wallhack [Kendi Yapmış Olabilir Heee 😍]"
-                    elif report == "Found HPP Hack Data":
-                        report = "HPP Hilesinin Verisi Bulunmuş [Silememiş Herhalde 😭]"    
-                    elif report == "Found HPP CFG Data":
-                        report = "HPP Hilesinin CFG Dosyası Bulunmuş [Silememiş Herhalde 😭]"
-                    elif report == "Found HPP Hack":
-                        report = "HPP Hack Bulunmuş [OOO İyi Hile 😈]"
-                    elif report == "Found Extreme Injector":
-                        report = "Extreme Injector Kullanmış"
-                    elif report == "Found BunnyHop CFG - unknown status":
-                        report = "Bunny CFG Bulunmuş [Demekki Düz Hızlanan Buymuş 😡]"
-                    elif report == "Found Leis":
-                        report = "Leis Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]"
-                    elif report == "Knifebot":
-                        report = "Bıçak Botu Kullanmış 🤣"
-                    elif report == "Wallhack":
-                        report = "Duvardan Eren Kara'yı (Yani Beni) Görmüş 😈"
-                    elif report == "OpenGL32 Cheat":
-                        report = "OpenGL32 Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]"
-                    elif report == "Aimbot" or report == "Found SXE Aim":
-                        report = "Dandik Bir Aimbot Kullanmış 🤣"
-                    elif report == "Found Crystal Hack Data":
-                        report = "Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]"
-                    elif report == "Found Suspicious CFG apex.cfg (alias count: 384) - unknown status":
-                        report = "Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde"
-                       
+                    # Raporu çevir
+                    report = report_translation.get(report, report)
 
                     detection_status = "belli degil"
                     if detection == "Yes":
@@ -220,18 +199,18 @@ class COMMANDS(commands.Cog):
 
             for row in rows:
                 embed.add_field(
-                    name=f"**İSİM**: {row['Nick']}",
+                    name=f"**👤 İSİM**: {row['Nick']}",
                     value=(
-                        f"**OYUN**: {row['Game']}\n"
-                        f"**İD**: {row['ID']}\n"
-                        f"**EN SON OYNADIĞI SERVER**: {row['Server']}\n"
-                        f"**İP [SANSÜRLÜ]**: {row['IP']}\n"
-                        f"**ÜLKE**: {row['Country']}\n"
-                        f"**GÜNAHI**: {row['Report']}\n"
-                        f"**TARİH**: {row['Date']}\n"
-                        f"**SAAT**: {row['Time']}\n"
-                        f"**SİCİLİ**: {row['Detection before']}\n"
-                        f"**BÜTÜN BİLGİLERİ**: {row['Report URL']}\n"
+                        f"**🎮 OYUN**: {row['Game']}\n"
+                        f"**🆔 OYUN ID**: {row['ID']}\n"
+                        f"**🌍 EN SON OYNADIĞI SERVER**: {row['Server']}\n"
+                        f"**🌐 İP [SANSÜRLÜ]**: {row['IP']}\n"
+                        f"**🌍 ÜLKE**: {row['Country']}\n"
+                        f"**🚨 GÜNAHI**: {row['Report']}\n"
+                        f"**📅 TARİH**: {row['Date']}\n"
+                        f"**🕒 SAAT**: {row['Time']}\n"
+                        f"**🔍 SICİLİ**: {row['Detection before']}\n"
+                        f"**🔗 BÜTÜN BİLGİLERİ**: {row['Report URL']}\n"
                         "-------------------------------------------------------------------------------"
                     ),
                     inline=False
