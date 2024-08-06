@@ -23,6 +23,7 @@ app = Flask(__name__)
 bot = discord.Bot()
 bot.load_extension('commands')
 bot.load_extension('commands2')
+bot.load_extension('commands3')
 
     # Discord bot komutları
 @bot.slash_command(
