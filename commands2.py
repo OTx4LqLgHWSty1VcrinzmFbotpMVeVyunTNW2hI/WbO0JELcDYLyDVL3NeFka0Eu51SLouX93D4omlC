@@ -18,6 +18,11 @@ def format_timestamp(timestamp):
     except ValueError:
         return "Geçersiz Tarih/Saat Formatı"
 
+def clean_steam_id(steam_id):
+    if steam_id and steam_id.startswith('Steam #'):
+        return steam_id.replace('Steam # ', '')
+    return steam_id
+
 class COMMANDS2(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -38,7 +43,8 @@ class COMMANDS2(commands.Cog):
         if response.status_code != 200:
             await ctx.respond(f"Bilgi çekilemedi: {response.status_code}")
             return
-
+            
+        report_id = rapor_linki.split('id=')[1]
         # HTML içeriğini ayrıştır
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -73,7 +79,7 @@ class COMMANDS2(commands.Cog):
                 'modules': None,
                 'cstrike': None,
                 'cfg': None,
-                'resources': None
+                'resources': None,
             }
 
             for div in report_div.find_all('div', class_=tag_class):
@@ -84,7 +90,11 @@ class COMMANDS2(commands.Cog):
                 elif 'Nick' in text_content:
                     data['nick'] = next_div.get_text(strip=True)
                 elif 'Type (Steam/NonSteam)' in text_content:
-                    data['steam_id'] = next_div.get_text(strip=True)
+                    steam_id_text = next_div.get_text(strip=True)
+                    if 'NonSteam' in steam_id_text:
+                        data['steam_id'] = "Kaçak Olduğu İçin Göremiyorum 😭"
+                    else:
+                        data['steam_id'] = clean_steam_id(steam_id_text)
                 elif 'Render' in text_content:
                     data['render'] = next_div.get_text(strip=True)
                 elif 'CS opened at' in text_content:
@@ -104,14 +114,39 @@ class COMMANDS2(commands.Cog):
                 elif 'IP:' in text_content:
                     data['ip_info'] = next_div.get_text(strip=True)
 
-                # Ülke bilgisini çıkar
+                country_translation = {
+                    "Romania": "Romanya 🇷🇴",
+                    "Greece": "Yunanistan 🇬🇷",
+                    "Lithuania": "Litvanya 🇱🇹",
+                    "United Kingdom": "İngiltere 🇬🇧",
+                    "Russia": "Rusya 🇷🇺",
+                    "Egypt": "Mısır 🇪🇬",
+                    "Ukraine": "Ukrayna 🇺🇦",
+                    "Algeria": "Cezayir 🇩🇿",
+                    "Albania": "Arnavutluk 🇦🇱",
+                    "Serbia": "Sırbistan 🇷🇸",
+                    "Germany": "Almanya 🇩🇪",
+                    "Bulgaria": "Bulgaristan 🇧🇬",
+                    "Bosnia and Herzegovina": "Bosna Hersek 🇧🇦",
+                    "Ireland": "İrlanda 🇮🇪",
+                    "Sweden": "İsveç 🇸🇪",
+                    "Switzerland": "İsviçre 🇨🇭",
+                    "Hungary": "Macaristan 🇭🇺",
+                    "Kazakhstan": "Kazakistan 🇰🇿",
+                    "Uzbekistan": "Özbekistan 🇺🇿",
+                    "France": "Fransa 🇫🇷",
+                    "Poland": "Polonya 🇵🇱",
+                    "United States": "Amerika Birleşik Devletleri 🇺🇸"
+                }
+
                 previous_div = div.find_previous_sibling('div')
                 if previous_div:
                     flag_img_tag = previous_div.find('img', {'style': 'display:inline-block;vertical-align:sub;'})
                     if flag_img_tag and 'title' in flag_img_tag.attrs:
-                        data['country'] = flag_img_tag['title']
+                        country = flag_img_tag['title']
 
-                # Processes bağlantısını çıkar
+                        data['country'] = country_translation.get(country, country)
+
                 if 'Processes:' in text_content:
                     process_link = next_div.find('a', href=True)
                     if process_link:
@@ -149,16 +184,51 @@ class COMMANDS2(commands.Cog):
 
             return data
 
-        # 'reporttagcheat' ve 'reporttag' ile verileri çek
         data_cheat = extract_data('reporttagcheat')
         data_tag = extract_data('reporttag')
 
         # Verileri birleştir ve formatla
         combined_data = [data_cheat, data_tag]
+        found_data = False 
+
+        report_messages = {
+            'No Cheat Signature Detected': 'ADAM TEMİZ ÇIKMIŞ DAHA NE İSTİYORSUN LAN!',
+            'OpenGL32 Cheat': 'OpenGL32 Hilesi Tespit Edildi',
+            'Alternative': 'Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]',
+            'Found Alternative': 'Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]',
+            'AlterNative': 'Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]',
+            'Generic Cheat Detection': 'Wargods Daha İsim Koyamamis Nasıl Bir Hileyse',
+            'Found Oxware Data': 'Oxware Hack Bulundu [OOO Güncel Hile 😈]',
+            'Riscript Injector': 'Dandik İnjektörlerden İyidir | Riscript Injector',
+            'Found Injector': 'İsimsiz Dandik İnjektor Kullanmış 🤣',
+            'Cheat Model': 'Karakter Modellerini Değiştirmiş 🤦‍♂️',
+            'Cheat model': 'Karakter Modellerini Değiştirmiş 🤦‍♂️',
+            'Found Super Simple Wallhack': 'Çok Basit Wallhack [Kendi Yapmış Olabilir Heee 😍]',
+            'Found HPP Hack Data': 'HPP Hilesinin Verisi Bulunmuş [Silememiş Herhalde 😭]',
+            'Found HPP CFG Data': 'HPP Hilesinin CFG Dosyası Bulunmuş [Silememiş Herhalde 😭]',
+            'Found HPP Hack': 'HPP Hack Bulunmuş [OOO İyi Hile 😈]',
+            'Found Extreme Injector': 'Extreme Injector Kullanmış',
+            'Found BunnyHop CFG - unknown status': 'Bunny CFG Bulunmuş [Demekki Düz Hızlanan Buymuş 😡]',
+            'Found Leis': 'Leis Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]',
+            'Knifebot': 'Bıçak Botu Kullanmış 🤣',
+            'Wallhack': 'Duvardan Eren Kara\'yı (Yani Beni) Görmüş 😈',
+            'Aimbot': 'Dandik Bir Aimbot Kullanmış 🤣',
+            'Found SXE Aim': 'Dandik Bir Aimbot Kullanmış 🤣',
+            'Found Crystal Hack Data': 'Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]',
+            'Found Suspicious CFG apex.cfg (alias count: 384) - unknown status': 'Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde'
+        }
+
         for entry in combined_data:
             if entry['nick']:
+                found_data = True
+                # Rapor verisini kontrol et ve gerekirse değiştir
+                for key, message in report_messages.items():
+                    if key in entry['report']:
+                        entry['report'] = entry['report'].replace(key, message)
+
+
                 # Embed rengini rapor metnine göre ayarla
-                embed_color = discord.Color.dark_blue() if entry['report'] and "No Cheat Signature Detected" in entry['report'] else discord.Color.red()
+                embed_color = discord.Color.dark_blue() if entry['report'] and "ADAM TEMİZ ÇIKMIŞ DAHA NE İSTİYORSUN LAN!" in entry['report'] else discord.Color.red()
 
                 embed = discord.Embed(
                     title=f"İstediğin {entry['nick']} Adındaki Kişinin Bilgileri",
@@ -167,34 +237,34 @@ class COMMANDS2(commands.Cog):
 
                 # Kalın metin için ** işareti kullanın ve verileri alt alta ekleyin
                 embed.add_field(
-                    name="Bana Göre Temiz Bu Adam",
+                    name=f"Rapor Bilgileri - {report_id}",
                     value=(
-                        f"İSİM: **{entry['nick'] or 'Bilgi Yok'}**\n"
-                        f"Unique ID: **{entry['unique_id'] or 'Bilgi Yok'}**\n"
-                        f"ID: **{entry['steam_id'] or 'Bilgi Yok'}**\n"
-                        f"Render: **{entry['render'] or 'Bilgi Yok'}**\n"
-                        f"IP Bilgisi: **{entry['ip_info'] or 'Bilgi Yok'}**\n"
-                        f"Ülke: **{entry['country'] or 'Bilgi Yok'}**\n"
-                        f"Rapor: **{entry['report'] or 'Bilgi Yok'}**\n"
-                        f"CS Açılma Tarihi & Zamanı: **{entry['cs_opened_at'] or 'Bilgi Yok'}**\n"
-                        f"Wargods Açılma Tarihi & Zamanı: **{entry['wcd_timestamp'] or 'Bilgi Yok'}**\n"
-                        f"Wargods Taratıldığı Tarih & Zamanı: **{entry['system_timestamp'] or 'Bilgi Yok'}**\n"
-                        f"Wargods Serverine Sonucun Gönderdildiği Tarih & Zaman: **{entry['server_timestamp'] or 'Bilgi Yok'}**\n"
-                        f"Son Oynadığı Server IP: **{entry['last_server_ip'] or 'Bilgi Yok'}**\n"
-                        f"İşletim Sistemi: **{entry['operating_system'] or 'Bilgi Yok'}**\n"
-                        f"Çalışan İşlemler: **{entry['processes'] or 'Bilgi Yok'}**\n"
-                        f"Çalışan Modüller: **{entry['modules'] or 'Bilgi Yok'}**\n"
-                        f"Çalışan Cstrike: **{entry['cstrike'] or 'Bilgi Yok'}**\n"
-                        f"Çalışan Configler: **{entry['cfg'] or 'Bilgi Yok'}**\n"
-                        f"Modeller/Spriteler: **{entry['resources'] or 'Bilgi Yok'}**\n"
+                        f"👤 İSİM: **{entry['nick'] or 'Bilgi Yok'}**\n"
+                        f"🆔 Wargods Özel ID [SANSÜRLÜ]: **{entry['unique_id'] or 'Bilgi Yok'}**\n"
+                        f"🎮 OYUN ID: **{entry['steam_id'] or 'Bilgi Yok'}**\n"
+                        f"🎨 Video Modu: **{entry['render'] or 'Bilgi Yok'}**\n"
+                        f"🌐 IP Bilgisi [SANSÜRLÜ]: **{entry['ip_info'] or 'Bilgi Yok'}**\n"
+                        f"🏁 Ülke: **{entry['country'] or 'Bilgi Yok'}**\n"
+                        f"📋 Rapor: **{entry['report'] or 'Bilgi Yok'}**\n"
+                        f"⏰ CS Açılış Saati: **{entry['cs_opened_at'] or 'Bilgi Yok'}**\n"
+                        f"🌍 Son Oynadığı Server IP: **{entry['last_server_ip'] or 'Servere Girmeden Önce WG Taratmış'}**\n"
+                        f"🕒 Wargods Açılma Tarihi & Zamanı: **{entry['wcd_timestamp'] or 'Bilgi Yok'}**\n"
+                        f"🔎 Wargods Taratıldığı Tarih & Zamanı: **{entry['system_timestamp'] or 'Bilgi Yok'}**\n"
+                        f"🕒 Wargods Serverine Gönderdildiği Tarih & Zaman: **{entry['server_timestamp'] or 'Bilgi Yok'}**\n"
+                        f"💻 İşletim Sistemi: **{entry['operating_system'] or 'Bilgi Yok'}**\n"
+                        f"📝 Arka Planda Çalışan Uygulamalar: **{entry['processes'] or 'Bilgi Yok'}**\n"
+                        f"🔧 Oyun İçinde Çalışan DLL'er: **{entry['modules'] or 'Bilgi Yok'}**\n"
+                        f"🗂️ Cstrike (dll/exe/scriptler): **{entry['cstrike'] or 'Bilgi Yok'}**\n"
+                        f"📂 Config Dosyaları: **{entry['cfg'] or 'Bilgi Yok'}**\n"
+                        f"📁 Modeller/Spriteler: **{entry['resources'] or 'Bilgi Yok'}**"
                     ),
                     inline=False
                 )
 
                 await ctx.respond(embed=embed)
-                return
 
-        await ctx.respond("Güncel rapor bulunamadı.")
+        if not found_data:
+            await ctx.respond("Rapor Bilgisi Bulunamadı")
 
 def setup(bot):
     bot.add_cog(COMMANDS2(bot))
