@@ -151,6 +151,8 @@ class COMMANDS(commands.Cog):
                         "Found Suspicious CFG apex.cfg (alias count: 384) - unknown status": "Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde",
                         "Psilentware": "Psilentware Hack Bulunmuş [OOO Güncel / İyi Hile 😈]",
                         "Oxware": "Oxware Hack Bulundu [OOO Güncel Hile / İyi Hile 😈]",
+                        "Found Project-X Rage": "Project-X Rage Hack Bulundu",
+                        "sPwnage Cheat": "sPwnage Hilesi Bulunmuş,"
                     }
 
                     # Diğer kod
