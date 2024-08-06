@@ -240,7 +240,7 @@ class COMMANDS2(commands.Cog):
                     name=f"Rapor Bilgileri - {report_id}",
                     value=(
                         f"👤 İSİM: **{entry['nick'] or 'Bilgi Yok'}**\n"
-                        f"🆔 Wargods Özel ID [SANSÜRLÜ]: **{entry['unique_id'] or 'Bilgi Yok'}**\n"
+                        f"🆔 Wargods ID [SANSÜRLÜ]: **{entry['unique_id'] or 'Bilgi Yok'}**\n"
                         f"🎮 OYUN ID: **{entry['steam_id'] or 'Bilgi Yok'}**\n"
                         f"🎨 Video Modu: **{entry['render'] or 'Bilgi Yok'}**\n"
                         f"🌐 IP Bilgisi [SANSÜRLÜ]: **{entry['ip_info'] or 'Bilgi Yok'}**\n"
