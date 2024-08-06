@@ -3,27 +3,24 @@ from discord.ext import commands
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import re
 
 integration_types = {
     discord.IntegrationType.guild_install,
     discord.IntegrationType.user_install,
 }
 
-def format_timestamp(timestamp):
-    try:
-        dt = datetime.strptime(timestamp, '%d.%m.%Y %H:%M:%S')
-        formatted_date = dt.strftime('%d.%m.%Y')
-        formatted_time = dt.strftime('%H:%M:%S')
-        return f"{formatted_date} | {formatted_time}"
-    except ValueError:
-        return "Geçersiz Tarih/Saat Formatı"
+# İzin verilen kanal ID'leri
+ALLOWED_CHANNEL_IDS = {
+    1218307973030477944, # EmmiOğlu
+    1212848523683434526, # Benim GC Tek Ben Ve Yan Hesabım Var
+    1269699846999380050  # Benim GC Ben Ve Ahmet Var
+}
 
-def clean_steam_id(steam_id):
-    if steam_id and steam_id.startswith('Steam #'):
-        return steam_id.replace('Steam # ', '')
-    return steam_id
+# URL doğrulama düzenli ifadesi
+URL_PATTERN = re.compile(r'https://www\.wargods\.ro/wcd/report\.php\?id=\d+')
 
-class COMMANDS2(commands.Cog):
+class COMMANDS1(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -33,9 +30,15 @@ class COMMANDS2(commands.Cog):
         integration_types=integration_types
     )
     async def wargods(self, ctx, rapor_linki: str):
-        # URL doğrulaması
-        if not rapor_linki.startswith('https://www.wargods.ro/wcd/report.php?id='):
-            await ctx.respond("Linki Adam Akıllı Tam Gir Lan!!!")
+        # İzin verilen kanalda olup olmadığını kontrol et
+        if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
+            return
+
+        if rapor_linki.isdigit():
+            rapor_linki = f"https://www.wargods.ro/wcd/report.php?id={rapor_linki}"
+            
+        if not URL_PATTERN.match(rapor_linki):
+            await ctx.respond("Linki Adam Akıllı Gir Yada Sayı Gir!!!")
             return
 
         # URL'ye GET isteği gönder
@@ -43,7 +46,7 @@ class COMMANDS2(commands.Cog):
         if response.status_code != 200:
             await ctx.respond(f"Bilgi çekilemedi: {response.status_code}")
             return
-            
+
         report_id = rapor_linki.split('id=')[1]
         # HTML içeriğini ayrıştır
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -59,6 +62,20 @@ class COMMANDS2(commands.Cog):
             await ctx.respond("Rapor bulunamadı")
             return
 
+        def format_timestamp(timestamp):
+            try:
+                dt = datetime.strptime(timestamp, '%d.%m.%Y %H:%M:%S')
+                formatted_date = dt.strftime('%d.%m.%Y')
+                formatted_time = dt.strftime('%H:%M:%S')
+                return f"{formatted_date} | {formatted_time}"
+            except ValueError:
+                return "Tarih ve Saat Bilgisi Çekilemedi"
+
+        def clean_steam_id(steam_id):
+            if steam_id and steam_id.startswith('Steam #'):
+                return steam_id.replace('Steam # ', '')
+            return steam_id
+            
         # Verileri çekmek için yardımcı fonksiyon
         def extract_data(tag_class):
             data = {
@@ -115,6 +132,8 @@ class COMMANDS2(commands.Cog):
                     data['ip_info'] = next_div.get_text(strip=True)
 
                 country_translation = {
+                    "Türkiye": "Türkiye 🇹🇷",
+                    "Pakistan": "Pakistan 🇵🇰",
                     "Romania": "Romanya 🇷🇴",
                     "Greece": "Yunanistan 🇬🇷",
                     "Lithuania": "Litvanya 🇱🇹",
@@ -136,7 +155,10 @@ class COMMANDS2(commands.Cog):
                     "Uzbekistan": "Özbekistan 🇺🇿",
                     "France": "Fransa 🇫🇷",
                     "Poland": "Polonya 🇵🇱",
-                    "United States": "Amerika Birleşik Devletleri 🇺🇸"
+                    "Georgia": "Gürcistan 🇬🇪",
+                    "Saudi Arabia": "Suudi Arabistan 🇸🇦",
+                    "North Macedonia": "Kuzey Makedonya 🇲🇰",
+                    "Kosovo": "Kosova 🇽🇰"
                 }
 
                 previous_div = div.find_previous_sibling('div')
@@ -192,30 +214,37 @@ class COMMANDS2(commands.Cog):
         found_data = False 
 
         report_messages = {
-            'No Cheat Signature Detected': 'ADAM TEMİZ ÇIKMIŞ DAHA NE İSTİYORSUN LAN!',
-            'OpenGL32 Cheat': 'OpenGL32 Hilesi Tespit Edildi',
-            'Alternative': 'Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]',
-            'Found Alternative': 'Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]',
-            'AlterNative': 'Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]',
-            'Generic Cheat Detection': 'Wargods Daha İsim Koyamamis Nasıl Bir Hileyse',
-            'Found Oxware Data': 'Oxware Hack Bulundu [OOO Güncel Hile 😈]',
-            'Riscript Injector': 'Dandik İnjektörlerden İyidir | Riscript Injector',
-            'Found Injector': 'İsimsiz Dandik İnjektor Kullanmış 🤣',
-            'Cheat Model': 'Karakter Modellerini Değiştirmiş 🤦‍♂️',
-            'Cheat model': 'Karakter Modellerini Değiştirmiş 🤦‍♂️',
-            'Found Super Simple Wallhack': 'Çok Basit Wallhack [Kendi Yapmış Olabilir Heee 😍]',
-            'Found HPP Hack Data': 'HPP Hilesinin Verisi Bulunmuş [Silememiş Herhalde 😭]',
-            'Found HPP CFG Data': 'HPP Hilesinin CFG Dosyası Bulunmuş [Silememiş Herhalde 😭]',
-            'Found HPP Hack': 'HPP Hack Bulunmuş [OOO İyi Hile 😈]',
-            'Found Extreme Injector': 'Extreme Injector Kullanmış',
-            'Found BunnyHop CFG - unknown status': 'Bunny CFG Bulunmuş [Demekki Düz Hızlanan Buymuş 😡]',
-            'Found Leis': 'Leis Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]',
-            'Knifebot': 'Bıçak Botu Kullanmış 🤣',
-            'Wallhack': 'Duvardan Eren Kara\'yı (Yani Beni) Görmüş 😈',
-            'Aimbot': 'Dandik Bir Aimbot Kullanmış 🤣',
-            'Found SXE Aim': 'Dandik Bir Aimbot Kullanmış 🤣',
-            'Found Crystal Hack Data': 'Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]',
-            'Found Suspicious CFG apex.cfg (alias count: 384) - unknown status': 'Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde'
+            "No Cheat Signature Detected": "ADAM TEMİZ ÇIKMIŞ DAHA NE İSTİYORSUN LAN!",
+            "Found Vermillion": "Vermillion Hack Bulundu [Yıl Kaç? 👴]",
+            "Found Big CFG - unknown status": "Büyük Bir CFG Var Adamda Sıkıntılı",
+            "Alternative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
+            "Found Alternative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
+            "AlterNative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
+            "Generic Cheat Detection": "Wargods Daha İsim Koyamamis Nası Bi Hileyse",
+            "Found Oxware Data": "Oxware Hack Bulundu [OOO Güncel Hile / İyi Hile 😈]",
+            "Riscript Injector": "Dandik İnjektörlerden İyidir | Riscript Injector",
+            "Found Injector": "İsimsiz Dandik İnjektor Kullanmış 🤣",
+            "Cheat Model": "Karakter Modellerini Değiştirmiş 🤦‍♂️",
+            "Cheat model": "Karakter Modellerini Değiştirmiş 🤦‍♂️",
+            "Found Super Simple Wallhack": "Çok Basit Wallhack [Kendi Yapmış Olabilir Heee 😍]",
+            "Found HPP Hack Data": "HPP Hilesinin Verisi Bulunmuş [Silememiş Herhalde 😭]",
+            "Found HPP CFG Data": "HPP Hilesinin CFG Dosyası Bulunmuş [Silememiş Herhalde 😭]",
+            "Found HPP Hack": "HPP Hack Bulunmuş [OOO İyi Hile 😈]",
+            "Found Extreme Injector": "Extreme Injector Kullanmış",
+            "Found BunnyHop CFG - unknown status": "Bunny CFG Bulunmuş [Demekki Düz Hızlanan Buymuş 😡]",
+            "Found Leis": "Leis Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]",
+            "Knifebot": "Bıçak Botu Kullanmış 🤣",
+            "Wallhack": "Duvardan Eren Kara'yı (Yani Beni) Görmüş 😈",
+            "WallHack": "Duvardan Eren Kara'yı (Yani Beni) Görmüş 😈",
+            "OpenGL32 Cheat": "OpenGL32 Hack Bulunmuş [FOSİLİNDE FOSİLİ 🦖]",
+            "Aimbot": "Dandik Bir Aimbot Kullanmış 🤣",
+            "Found SXE Aim": "Dandik Bir Aimbot Kullanmış 🤣",
+            "Found Crystal Hack Data": "Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]",
+            "Found Suspicious CFG apex.cfg (alias count: 384) - unknown status": "Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde",
+            "Psilentware": "Psilentware Hack Bulunmuş [OOO Güncel / İyi Hile 😈]",
+            "Oxware": "Oxware Hack Bulundu [OOO Güncel Hile / İyi Hile 😈]",
+            "Found Project-X Rage": "Project-X Rage Hack Bulundu",
+            "sPwnage Cheat": "sPwnage Hilesi Bulunmuş",
         }
 
         for entry in combined_data:
@@ -249,8 +278,8 @@ class COMMANDS2(commands.Cog):
                         f"⏰ CS Açılış Saati: **{entry['cs_opened_at'] or 'Bilgi Yok'}**\n"
                         f"🌍 Son Oynadığı Server IP: **{entry['last_server_ip'] or 'Servere Girmeden Önce WG Taratmış'}**\n"
                         f"🕒 Wargods Açılma Tarihi & Zamanı: **{entry['wcd_timestamp'] or 'Bilgi Yok'}**\n"
-                        f"🔎 Wargods Taratıldığı Tarih & Zamanı: **{entry['system_timestamp'] or 'Bilgi Yok'}**\n"
-                        f"🕒 Wargods Serverine Gönderdildiği Tarih & Zaman: **{entry['server_timestamp'] or 'Bilgi Yok'}**\n"
+                        f"🔎 Taratanın Sistem Tarihi & Zamanı **{entry['system_timestamp'] or 'Bilgi Yok'}**\n"
+                        f"🕒 Wargods Serverinin Tarihi & Zamanı: **{entry['server_timestamp'] or 'Bilgi Yok'}**\n"
                         f"💻 İşletim Sistemi: **{entry['operating_system'] or 'Bilgi Yok'}**\n"
                         f"📝 Arka Planda Çalışan Uygulamalar: **{entry['processes'] or 'Bilgi Yok'}**\n"
                         f"🔧 Oyun İçinde Çalışan DLL'er: **{entry['modules'] or 'Bilgi Yok'}**\n"
@@ -267,4 +296,4 @@ class COMMANDS2(commands.Cog):
             await ctx.respond("Rapor Bilgisi Bulunamadı")
 
 def setup(bot):
-    bot.add_cog(COMMANDS2(bot))
+    bot.add_cog(COMMANDS1(bot))
