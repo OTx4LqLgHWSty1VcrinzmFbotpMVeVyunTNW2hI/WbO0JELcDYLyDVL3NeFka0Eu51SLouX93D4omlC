@@ -24,7 +24,6 @@ class COMMANDS(commands.Cog):
     async def wargods(self, ctx):
         # Check if the command was invoked in an allowed channel
         if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
-            await ctx.respond("Bu komutu burada kullanamazsınız.")
             return
 
         url = 'https://www.wargods.ro/wcd/index.php'
@@ -212,9 +211,9 @@ class COMMANDS(commands.Cog):
         if rows:
             embed = discord.Embed(
                 title="HILE SAVAR - EREN KARA",
-                description="---------------------------------------------------------------------------------",
+                description="------------------------------------------------------------------------------------",
                 color=discord.Color.brand_red(),
-                thumbnail="https://wargods.ro/wcd/wcd.ico"
+                thumbnail=""
             )
 
             for row in rows:
@@ -231,7 +230,7 @@ class COMMANDS(commands.Cog):
                         f"**🕒 SAAT**: {row['Time']}\n"
                         f"**🔍 SICİLİ**: {row['Detection before']}\n"
                         f"**🔗 BÜTÜN BİLGİLERİ**: {row['Report URL']}\n"
-                        "-------------------------------------------------------------------------------"
+                        "------------------------------------------------------------------------------------"
                     ),
                     inline=False
                 )
