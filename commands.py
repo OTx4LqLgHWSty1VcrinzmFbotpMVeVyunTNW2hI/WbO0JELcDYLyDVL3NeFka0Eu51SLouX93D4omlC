@@ -152,7 +152,7 @@ class COMMANDS(commands.Cog):
                         "Psilentware": "Psilentware Hack Bulunmuş [OOO Güncel / İyi Hile 😈]",
                         "Oxware": "Oxware Hack Bulundu [OOO Güncel Hile / İyi Hile 😈]",
                         "Found Project-X Rage": "Project-X Rage Hack Bulundu",
-                        "sPwnage Cheat": "sPwnage Hilesi Bulunmuş,"
+                        "sPwnage Cheat": "sPwnage Hilesi Bulunmuş"
                     }
 
                     # Diğer kod
