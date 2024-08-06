@@ -9,6 +9,12 @@ integration_types = {
     discord.IntegrationType.user_install,
 }
 
+ALLOWED_CHANNEL_IDS = {
+    1218307973030477944, # EmmiOğlu
+    1212848523683434526, # Benim GC Tek Ben Ve Yan Hesabım Var
+    1269699846999380050 # Benim GC Ben Ve Ahmet Var
+}
+
 class COMMANDS(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,7 +22,11 @@ class COMMANDS(commands.Cog):
     @commands.slash_command(name='wargods', description='Güncel Hilecileri Göster Lan!!!',
     integration_types=integration_types)
     async def wargods(self, ctx):
-        # Define the URL
+        # Check if the command was invoked in an allowed channel
+        if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
+            await ctx.respond("Bu komutu burada kullanamazsınız.")
+            return
+
         url = 'https://www.wargods.ro/wcd/index.php'
 
         # Send a GET request to the URL
@@ -84,28 +94,33 @@ class COMMANDS(commands.Cog):
                     detection = cells[5].get_text(strip=True)
 
                     country_translation = {
-                        "Romania": "Romanya",
-                        "Greece": "Yunanistan",
-                        "Lithuania": "Litvanya",
-                        "United Kingdom": "İngiltere",
-                        "Russia": "Rusya",
-                        "Egypt": "Mısır",
-                        "Ukraine": "Ukrayna",
-                        "Algeria": "Cezayir",
-                        "Albania": "Arnavutluk",
-                        "Serbia": "Sırbistan",
-                        "Germany": "Almanya",
-                        "Bulgaria": "Bulgaristan",
-                        "Bosnia and Herzegovina": "Bosna Hersek",
-                        "Ireland": "İrlanda",
-                        "Sweden": "İsveç",
-                        "Switzerland": "İsviçre",
-                        "Hungary": "Macaristan",
-                        "Kazakhstan": "Kazakistan",
-                        "Uzbekistan": "Özbekistan",
-                        "France": "Fransa",
-                        "Poland": "Polonya",
-                        "Georgia": "Gürcistan",
+                        "Türkiye": "Türkiye 🇹🇷",
+                        "Pakistan": "Pakistan 🇵🇰",
+                        "Romania": "Romanya 🇷🇴",
+                        "Greece": "Yunanistan 🇬🇷",
+                        "Lithuania": "Litvanya 🇱🇹",
+                        "United Kingdom": "İngiltere 🇬🇧",
+                        "Russia": "Rusya 🇷🇺",
+                        "Egypt": "Mısır 🇪🇬",
+                        "Ukraine": "Ukrayna 🇺🇦",
+                        "Algeria": "Cezayir 🇩🇿",
+                        "Albania": "Arnavutluk 🇦🇱",
+                        "Serbia": "Sırbistan 🇷🇸",
+                        "Germany": "Almanya 🇩🇪",
+                        "Bulgaria": "Bulgaristan 🇧🇬",
+                        "Bosnia and Herzegovina": "Bosna Hersek 🇧🇦",
+                        "Ireland": "İrlanda 🇮🇪",
+                        "Sweden": "İsveç 🇸🇪",
+                        "Switzerland": "İsviçre 🇨🇭",
+                        "Hungary": "Macaristan 🇭🇺",
+                        "Kazakhstan": "Kazakistan 🇰🇿",
+                        "Uzbekistan": "Özbekistan 🇺🇿",
+                        "France": "Fransa 🇫🇷",
+                        "Poland": "Polonya 🇵🇱",
+                        "Georgia": "Gürcistan 🇬🇪",
+                        "Saudi Arabia": "Suudi Arabistan 🇸🇦",
+                        "North Macedonia": "Kuzey Makedonya 🇲🇰",
+                        "Kosovo": "Kosova 🇽🇰"
                     }
 
                     # Rapor adlarını çeviren sözlük
@@ -116,7 +131,7 @@ class COMMANDS(commands.Cog):
                         "Found Alternative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
                         "AlterNative": "Alternative Hack Bulundu [Sanki Biraz Eskidi Gibi 🤔]",
                         "Generic Cheat Detection": "Wargods Daha İsim Koyamamis Nası Bi Hileyse",
-                        "Found Oxware Data": "Oxware Hack Bulundu [OOO Güncel Hile 😈]",
+                        "Found Oxware Data": "Oxware Hack Bulundu [OOO Güncel Hile / İyi Hile 😈]",
                         "Riscript Injector": "Dandik İnjektörlerden İyidir | Riscript Injector",
                         "Found Injector": "İsimsiz Dandik İnjektor Kullanmış 🤣",
                         "Cheat Model": "Karakter Modellerini Değiştirmiş 🤦‍♂️",
@@ -135,7 +150,8 @@ class COMMANDS(commands.Cog):
                         "Found SXE Aim": "Dandik Bir Aimbot Kullanmış 🤣",
                         "Found Crystal Hack Data": "Crystal Hile Verisi Bulunmuş [Silememiş Herhalde 😭]",
                         "Found Suspicious CFG apex.cfg (alias count: 384) - unknown status": "Apex Cfg Kullanmış 384 Tane Alias Varmış İçinde",
-                        "Psilentware": "Psilentware Hack Bulunmuş [OOO Güncel / İyi Hile 😈]"
+                        "Psilentware": "Psilentware Hack Bulunmuş [OOO Güncel / İyi Hile 😈]",
+                        "Oxware": "Oxware Hack Bulundu [OOO Güncel Hile / İyi Hile 😈]",
                     }
 
                     # Diğer kod
@@ -163,17 +179,21 @@ class COMMANDS(commands.Cog):
                     # Raporu çevir
                     report = report_translation.get(report, report)
 
-                    detection_status = "belli degil"
+                    detection_status = "Belli Değil"
                     if detection == "Yes":
-                        detection_status = "kirli"
+                        detection_status = "Kirli"
                     elif detection == "No":
-                        detection_status = "temiz"
+                        detection_status = "Temiz"
 
                     # Set ID display based on Steam/NonSteam type
                     if "NonSteam" in steam_idd:
                         id_display = "**Kaçak Olduğu için, Wargods İzin Vermiyor Bakmama 😭**"
                     else:
-                        id_display = f"**{steam_idd}**"
+                        # Remove 'Steam #' prefix if present
+                        if steam_idd.startswith('Steam #'):
+                            id_display = f"**{steam_idd[7:].strip()}**"  # Remove 'Steam #' prefix
+                        else:
+                            id_display = f"**{steam_idd}**"
 
                     rows.append({
                         'Nick': f"**{nick}**",
