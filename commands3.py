@@ -63,16 +63,22 @@ class COMMANDS2(commands.Cog):
         # Yanıtı gönder
         await ctx.respond(f"Soru: {soru}\nYanıtım: {yanit}")
 
-    @commands.slash_command(name='video', description='Rastgele bir video gönderir', integration_types=integration_types)
+    @commands.slash_command(name='gonder', description='Rastgele bir video / fotoğraf gönder', integration_types=integration_types)
     async def video(self, ctx):
         if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
             return
-        # Video URL'leri
+
         videolar = [
             "https://cdn.discordapp.com/attachments/1270335595302096951/1270377104122449984/361807693_6463251553723359_129813083509844646_n.mp4",
             "https://cdn.discordapp.com/attachments/1270335595302096951/1270377135189528576/361791034_6786518214714626_7264071351127900550_n.mp4",
             "https://cdn.discordapp.com/attachments/1270335595302096951/1270377343508021298/421368668_24531764226471104_3911977699595297928_n.mp4",
-            "https://cdn.discordapp.com/attachments/1270335595302096951/1270377385497329837/363446197_7213485575333300_3214501604565230307_n.mp4"
+            "https://cdn.discordapp.com/attachments/1270335595302096951/1270377385497329837/363446197_7213485575333300_3214501604565230307_n.mp4",
+            "https://cdn.discordapp.com/attachments/1270335595302096951/1270688967305461780/f2g9b7x1k4m_q8r6z3p7j8l.mp4",
+            "https://cdn.discordapp.com/attachments/1270335595302096951/1270689009928110122/w1k3m8t2z5q_r7x4j6v9n2b.mp4",
+            "https://cdn.discordapp.com/attachments/1270335595302096951/1270689220930965514/x8r3k1m7b2j_p9q6v4z5n.mp4",
+            "https://cdn.discordapp.com/attachments/1270335595302096951/1270689296436695151/p4r9m2x7k1v_t6b3z8j5q.jpg",
+            "https://cdn.discordapp.com/attachments/1270335595302096951/1270689310991056906/m2z8p9k4x1r_t5j3b6q7v.jpg"
+
         ]
 
         # Rastgele video seç
