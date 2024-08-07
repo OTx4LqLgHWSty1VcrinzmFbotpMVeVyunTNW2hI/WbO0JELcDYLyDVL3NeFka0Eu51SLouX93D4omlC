@@ -1,11 +1,10 @@
 import discord
-from discord.enums import IntegrationType
 from discord.ext import commands
-
+import random
 import requests
 from io import BytesIO
 from PIL import Image
-import random
+
 
 integration_types = {
     discord.IntegrationType.guild_install,
@@ -28,32 +27,32 @@ class COMMANDS2(commands.Cog):
             return
         # Yanıt seçenekleri
         yanitlar = [
-            "Evet", 
-            "Hayır", 
-            "Belki", 
-            "Kesinlikle", 
-            "Kesinlikle değil", 
+            "Evet",
+            "Hayır",
+            "Belki",
+            "Kesinlikle",
+            "Kesinlikle değil",
             "Bilmiyorum",
-            "Muhtemelen", 
-            "Asla", 
-            "Kesinlikle evet", 
-            "Kesinlikle hayır", 
+            "Muhtemelen",
+            "Asla",
+            "Kesinlikle evet",
+            "Kesinlikle hayır",
             "Olabilir",
-            "Düşünülebilir", 
-            "Şu an kesin değil", 
-            "Zamanla göreceğiz", 
+            "Düşünülebilir",
+            "Şu an kesin değil",
+            "Zamanla göreceğiz",
             "Belki ileride",
-            "Şu an için uygun değil", 
-            "İhtimal var", 
-            "Uygun olabilir", 
+            "Şu an için uygun değil",
+            "İhtimal var",
+            "Uygun olabilir",
             "Belki evet, belki hayır",
-            "Hiçbir fikrim yok", 
-            "Karar veremedim", 
-            "Çok karmaşık", 
+            "Hiçbir fikrim yok",
+            "Karar veremedim",
+            "Çok karmaşık",
             "Bunu değerlendirmeliyim",
-            "Daha fazla bilgi gerekli", 
-            "Sana katılmıyorum", 
-            "Neden olmasın?", 
+            "Daha fazla bilgi gerekli",
+            "Sana katılmıyorum",
+            "Neden olmasın?",
             "Olanaklı",
             "Her şey olabilir"
         ]
@@ -62,10 +61,12 @@ class COMMANDS2(commands.Cog):
         yanit = random.choice(yanitlar)
 
         # Yanıtı gönder
-        await ctx.send(f"Soru: {soru}\nYanıtım: {yanit}")
+        await ctx.respond(f"Soru: {soru}\nYanıtım: {yanit}")
 
     @commands.slash_command(name='video', description='Rastgele bir video gönderir', integration_types=integration_types)
     async def video(self, ctx):
+        if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
+            return
         # Video URL'leri
         videolar = [
             "https://cdn.discordapp.com/attachments/1270335595302096951/1270377104122449984/361807693_6463251553723359_129813083509844646_n.mp4",
@@ -77,8 +78,7 @@ class COMMANDS2(commands.Cog):
         # Rastgele video seç
         video_url = random.choice(videolar)
 
-        # Video'yu gönder
-        await ctx.send(video_url)
+        await ctx.respond(video_url)
 
     @commands.slash_command(name='kişilik', description='Kişilik Özelliğini Eren Seçer', integration_types=integration_types)
     async def kişilik(self, ctx, kişi: discord.User = None):
@@ -86,26 +86,26 @@ class COMMANDS2(commands.Cog):
             return
         # Kişilik özellikleri
         kişilikler = [
-            "Dışa dönük", 
-            "İçsel", 
-            "Yardımsever", 
-            "Sakin", 
-            "Yaratıcı", 
+            "Dışa dönük",
+            "İçsel",
+            "Yardımsever",
+            "Sakin",
+            "Yaratıcı",
             "Analitik",
-            "Kararlı", 
-            "Duygusal", 
-            "Pratik", 
-            "Macera sever", 
-            "Sorumlu", 
+            "Kararlı",
+            "Duygusal",
+            "Pratik",
+            "Macera sever",
+            "Sorumlu",
             "Hassas",
-            "Esprili", 
-            "Girişken", 
-            "Öz disiplinli", 
-            "Kendine güvenen", 
+            "Esprili",
+            "Girişken",
+            "Öz disiplinli",
+            "Kendine güvenen",
             "Sabırlı",
-            "Gözlemci", 
-            "Organize", 
-            "Hikaye anlatıcı", 
+            "Gözlemci",
+            "Organize",
+            "Hikaye anlatıcı",
             "Etkileyici"
         ]
 
@@ -116,10 +116,12 @@ class COMMANDS2(commands.Cog):
         kişilik = random.choice(kişilikler)
 
         # Kullanıcıya kişilik özelliği bildir
-        await ctx.send(f"{kişi.mention}'in kişilik özelliği: {kişilik}")
+        await ctx.respond(f"{kişi.mention}'in kişilik özelliği: {kişilik}")
 
     @commands.slash_command(name='cum', description='cumshot at', integration_types=integration_types)
     async def cum(self, ctx, kişi: discord.User=None):
+        if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
+            return
         kişi = kişi or ctx.author
         img1 = self.get_image(kişi.display_avatar.url).convert('RGBA')
         await ctx.defer()
