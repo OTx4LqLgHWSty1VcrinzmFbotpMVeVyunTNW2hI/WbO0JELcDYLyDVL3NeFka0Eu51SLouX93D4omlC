@@ -124,7 +124,7 @@ class COMMANDS2(commands.Cog):
         # Kullanıcıya kişilik özelliği bildir
         await ctx.respond(f"{kişi.mention}'in kişilik özelliği: {kişilik}")
 
-    @commands.slash_command(name='cum', description='cumshot at', integration_types=integration_types)
+    @commands.slash_command(name='cumlasunueren', description='CUM SHOT AAAAT😍', integration_types=integration_types)
     async def cum(self, ctx, kişi: discord.User=None):
         if ctx.channel.id not in ALLOWED_CHANNEL_IDS:
             return
